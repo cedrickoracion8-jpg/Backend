@@ -1,5 +1,6 @@
 <?php defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed'); 
 $product = is_array($product ?? null) ? $product : []; 
+$errors = is_array($errors ?? null) ? $errors : [];
 $editing = !empty($product['id']); ?>
 <!doctype html>
 <html lang="en">
@@ -109,25 +110,29 @@ $editing = !empty($product['id']); ?>
     <a class="back" href="<?= site_url('products'); ?>">&larr; Back to products</a>
     <h1><?= $editing ? 'Edit product' : 'Add product'; ?></h1>
 
-    <?php if (!empty($error)): ?>
-        <div class="error" role="alert"><?= htmlspecialchars($error); ?></div>
+    <?php if ($errors): ?>
+        <div class="error" role="alert">
+            <?php foreach ($errors as $error): ?>
+                <div><?= htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
+            <?php endforeach; ?>
+        </div>
     <?php endif; ?>
 
-    <form method="post" action="<?= site_url($editing ? 'products/edit/' . (int) ($product['id'] ?? 0) : 'products'); ?>">
+    <form method="post" action="<?= site_url($editing ? 'products/edit/' . (int) $product['id'] : 'products/create'); ?>">
         <label for="product_name">Product name</label>
-        <input id="product_name" name="product_name" maxlength="100" required value="<?= htmlspecialchars($product['product_name'] ?? ''); ?>">
+        <input id="product_name" name="product_name" maxlength="100" required value="<?= htmlspecialchars($product['product_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
 
         <label for="description">Description</label>
-        <textarea id="description" name="description"><?= htmlspecialchars($product['description'] ?? ''); ?></textarea>
+        <textarea id="description" name="description"><?= htmlspecialchars($product['description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
 
         <div class="grid">
             <div>
                 <label for="price">Price</label>
-                <input id="price" name="price" type="number" min="0" step="0.01" required value="<?= htmlspecialchars($product['price'] ?? ''); ?>">
+                <input id="price" name="price" type="number" min="0" step="0.01" required value="<?= htmlspecialchars($product['price'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             </div>
             <div>
                 <label for="quantity">Quantity</label>
-                <input id="quantity" name="quantity" type="number" min="0" step="1" required value="<?= htmlspecialchars($product['quantity'] ?? ''); ?>">
+                <input id="quantity" name="quantity" type="number" min="0" step="1" required value="<?= htmlspecialchars($product['quantity'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             </div>
         </div>
 

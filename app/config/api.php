@@ -96,8 +96,8 @@ $config['refresh_token_key'] = getenv('REFRESH_TOKEN_KEY') ?: '';
 | already deployed.
 |
 */
-//para ma ma kapasok ang lahat
-$config['allow_origin'] = '*';
+$allowed_origins = array_filter(array_map('trim', explode(',', getenv('CORS_ORIGINS') ?: 'http://localhost:5173')));
+$config['allow_origin'] = $allowed_origins;
 
 /*
 |--------------------------------------------------------------------------

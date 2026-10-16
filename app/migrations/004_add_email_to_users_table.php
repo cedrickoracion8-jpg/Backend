@@ -40,13 +40,12 @@ class Add_email_to_users_table
         ]);
 
         $this->_lava->db->raw(
-            'ALTER TABLE users ADD UNIQUE INDEX email_unique (email)'
+            'ALTER TABLE users ADD INDEX email_idx (email)'
         );
     }
 
     public function down()
     {
-        $this->_lava->db->raw('ALTER TABLE users DROP INDEX email_unique');
-        $this->_lava->dbforge->drop_column('users', 'email');
+        // The email field is part of the canonical users schema and may predate this migration.
     }
 }

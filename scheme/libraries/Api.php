@@ -560,7 +560,7 @@ class Api
      * @param string $refresh_token
      * @return void
      */
-    public function refresh_access_token($refresh_token)
+    public function refresh_access_token($refresh_token, $user_data = [])
     {
         $payload = $this->validate_jwt($refresh_token);
         if (!$payload || ($payload['type'] ?? '') !== 'refresh') {
@@ -583,7 +583,10 @@ class Api
         // Revoke old + rotate (best practice)
         $this->revoke_refresh_token($refresh_token);
 
-        $new_tokens = $this->issue_tokens(['id' => $payload['sub']]);
+        $new_tokens = $this->issue_tokens([
+            'id' => $payload['sub'],
+            'role' => $user_data['role'] ?? 'user',
+        ]);
 
         $this->respond([
             'message' => 'Tokens refreshed successfully',

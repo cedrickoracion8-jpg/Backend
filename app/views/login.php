@@ -87,6 +87,15 @@
             border-radius: 6px;
             margin-bottom: 1rem;
         }
+        .success {
+            margin-top: 1rem;
+            color: #a7f3d0;
+        }
+        .footer-link {
+            margin-top: 1.25rem;
+            text-align: center;
+        }
+        .footer-link a { color: #34d399; }
     </style>
 </head>
 <body>
@@ -94,7 +103,7 @@
     <h1>Product Desk</h1>
     <p>Sign in to manage the product inventory.</p>
     <?php if (!empty($error)): ?>
-        <div class="error" role="alert"><?= htmlspecialchars($error); ?></div>
+        <div class="error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>
     <form method="post" action="<?= site_url('login'); ?>">
         <label for="username">Username</label>
@@ -103,6 +112,10 @@
         <input id="password" name="password" type="password" required autocomplete="current-password">
         <button type="submit">Sign in</button>
     </form>
+    <?php if (!empty($registered)): ?>
+        <p class="success" role="status">Account created. You can now sign in.</p>
+    <?php endif; ?>
+    <p class="footer-link">Need an account? <a href="<?= site_url('register'); ?>">Register</a></p>
 </main>
 </body>
 </html>

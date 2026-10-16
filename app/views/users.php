@@ -133,21 +133,22 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
                 <th>Email</th>
                 <th>Username</th>
+                <th>Role</th>
+                <th>Created</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (!empty($users)): ?>
+            <?php if (!empty($users)):             defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
+            ?>
                 <?php foreach ($users as $user): ?>
                     <tr>
                         <td><?= html_escape($user['id'] ?? ''); ?></td>
-                        <td><?= html_escape($user['firstname'] ?? ''); ?></td>
-                        <td><?= html_escape($user['lastname'] ?? ''); ?></td>
                         <td><?= html_escape($user['email'] ?? ''); ?></td>
                         <td><?= html_escape($user['username'] ?? ''); ?></td>
+                        <td><?= html_escape($user['role'] ?? ''); ?></td>
+                        <td><?= html_escape($user['created_at'] ?? ''); ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>

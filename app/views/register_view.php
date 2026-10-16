@@ -87,10 +87,10 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
     <p class="subtitle">Register to manage products.</p>
 
     <?php if (!empty($error)): ?>
-        <div class="msg error"><?= htmlspecialchars($error); ?></div>
+        <div class="msg error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>
 
-    <form method="post" action="<?= base_url('register'); ?>">
+    <form method="post" action="<?= site_url('register'); ?>">
         <label for="username">Username</label>
         <input type="text" id="username" name="username" autocomplete="username" required autofocus>
 
@@ -98,13 +98,13 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
         <input type="email" id="email" name="email" autocomplete="email" required>
 
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" autocomplete="new-password" minlength="6" required>
+        <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
 
         <button type="submit">Register</button>
     </form>
 
     <div class="footer-link">
-        Already have an account? <a href="<?= base_url('login'); ?>">Log in</a>
+        Already have an account? <a href="<?= site_url('login'); ?>">Log in</a>
     </div>
 </div>
 </body>

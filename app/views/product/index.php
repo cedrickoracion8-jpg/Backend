@@ -1,5 +1,8 @@
-<?php defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed'); 
-$products = is_array($products ?? null) ? $products : []; ?>
+<?php
+defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
+$products = is_array($products ?? null) ? $products : [];
+$is_admin = ($user_role ?? null) === 'admin';
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -142,42 +145,47 @@ $products = is_array($products ?? null) ? $products : []; ?>
         <p class="eyebrow">Inventory</p>
         <h1>Products</h1>
     </div>
-    <a class="button" href="<?= site_url('products/create'); ?>">Add product</a>
+    <?php if ($is_admin): ?>
+        <a class="button" href="<?= site_url('products/create'); ?>">Add product</a>
+    <?php endif; ?>
 </header>
 <main>
     <div class="toolbar">
-        <span class="user">Signed in as <?= htmlspecialchars($_SESSION['username'] ?? 'user'); ?></span>
+        <span class="user">Signed in as <?= htmlspecialchars($username ?? 'user', ENT_QUOTES, 'UTF-8'); ?></span>
         <form class="logout" method="post" action="<?= site_url('logout'); ?>">
             <button type="submit">Sign out</button>
         </form>
     </div>
     <?php if (!empty($message)): ?>
-        <div class="notice" role="status">Product <?= htmlspecialchars($message); ?>.</div>
+        <div class="notice" role="status"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>
     <div class="table-wrap">
         <table>
             <thead>
                 <tr>
-                    <th>Name</th><th>Description</th><th>Price</th><th>Quantity</th><th>Created</th><th>Actions</th>
+                    <th>Name</th><th>Description</th><th>Price</th><th>Quantity</th><th>Created</th>
+                    <?php if ($is_admin): ?><th>Actions</th><?php endif; ?>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!empty($products)): foreach ($products as $product): $product = is_array($product) ? $product : []; ?>
                     <tr>
-                        <td><strong><?= htmlspecialchars($product['product_name'] ?? ''); ?></strong></td>
-                        <td class="description"><?= htmlspecialchars($product['description'] ?? ''); ?></td>
+                        <td><strong><?= htmlspecialchars($product['product_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong></td>
+                        <td class="description"><?= htmlspecialchars($product['description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                         <td>₱<?= number_format((float) ($product['price'] ?? 0), 2); ?></td>
                         <td><?= (int) ($product['quantity'] ?? 0); ?></td>
-                        <td><?= htmlspecialchars($product['created_at'] ?? ''); ?></td>
-                        <td class="actions">
-                            <a href="<?= site_url('products/edit/' . (int) ($product['id'] ?? 0)); ?>">Edit</a>
-                            <form class="delete" method="post" action="<?= site_url('products/delete/' . (int) ($product['id'] ?? 0)); ?>" onsubmit="return confirm('Delete this product?');">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
+                        <td><?= htmlspecialchars($product['created_at'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                        <?php if ($is_admin): ?>
+                            <td class="actions">
+                                <a href="<?= site_url('products/edit/' . (int) ($product['id'] ?? 0)); ?>">Edit</a>
+                                <form class="delete" method="post" action="<?= site_url('products/delete/' . (int) ($product['id'] ?? 0)); ?>" onsubmit="return confirm('Delete this product?');">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; else: ?>
-                    <tr><td class="empty" colspan="6">No products yet. Add your first product to get started.</td></tr>
+                    <tr><td class="empty" colspan="<?= $is_admin ? 6 : 5; ?>">No products yet. <?= $is_admin ? 'Add your first product to get started.' : ''; ?></td></tr>
                 <?php endif; ?>
             </tbody>
         </table>

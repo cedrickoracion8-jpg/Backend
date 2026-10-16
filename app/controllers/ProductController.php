@@ -17,10 +17,10 @@ class ProductController extends Controller
     public function read()
     {
         $data['products'] = $this->ProductModel->read();
-        $data['name'] = "LavaLust Framework";
         $data['user_role'] = $this->session->userdata('user_role');
-        $data['notification'] = $this->session->flashdata('notification');
-        $this->call->view('product/ProductView', $data);
+        $data['username'] = $this->session->userdata('username');
+        $data['message'] = $this->session->flashdata('notification');
+        $this->call->view('product/index', $data);
     }
 
     public function create()
@@ -29,7 +29,7 @@ class ProductController extends Controller
 
         if ($this->form_validation->submitted()) {
             $this->validate_product();
-            if ($this->form_validation->run()) {
+            if ($this->form_validation->run() && $this->valid_quantity($this->io->post('quantity'))) {
                 $product_name = $this->io->post('product_name');
                 $description = $this->io->post('description');
                 $price = $this->io->post('price');
@@ -41,8 +41,14 @@ class ProductController extends Controller
             }
         }
 
-        $data['errors'] = $this->form_validation->get_errors();
-        $this->call->view('product/create', $data);
+        $data['product'] = [
+            'product_name' => $this->io->post('product_name') ?? '',
+            'description' => $this->io->post('description') ?? '',
+            'price' => $this->io->post('price') ?? '',
+            'quantity' => $this->io->post('quantity') ?? '',
+        ];
+        $data['errors'] = $this->product_errors();
+        $this->call->view('product/form', $data);
     }
 
     public function edit($id)
@@ -58,7 +64,7 @@ class ProductController extends Controller
         if ($this->form_validation->submitted()) {
             $this->validate_product();
 
-            if ($this->form_validation->run()) {
+            if ($this->form_validation->run() && $this->valid_quantity($this->io->post('quantity'))) {
                 $this->ProductModel->update(
                     (int) $id,
                     $this->io->post('product_name'),
@@ -74,8 +80,8 @@ class ProductController extends Controller
         }
 
         $data['product'] = $product;
-        $data['errors'] = $this->form_validation->get_errors();
-        $this->call->view('product/edit', $data);
+        $data['errors'] = $this->product_errors();
+        $this->call->view('product/form', $data);
     }
 
     public function delete($id)
@@ -90,10 +96,10 @@ class ProductController extends Controller
     private function validate_product()
     {
         $this->form_validation
-            ->name('product_name')->required()->alpha_numeric_space()
-            ->name('description')->required()->max_length(255)
-            ->name('price')->required()->numeric()
-            ->name('quantity')->required()->numeric();
+            ->name('product_name')->required()->max_length(100)
+            ->name('description')->max_length(255)
+            ->name('price')->required()->numeric()->greater_than_equal_to(0)
+            ->name('quantity')->required()->numeric()->greater_than_equal_to(0);
     }
 
     private function require_admin()
@@ -104,4 +110,20 @@ class ProductController extends Controller
         }
     }
 
+    private function valid_quantity($quantity)
+    {
+        return is_string($quantity)
+            && ctype_digit($quantity)
+            && (float) $quantity <= 4294967295;
+    }
+
+    private function product_errors()
+    {
+        $errors = $this->form_validation->get_errors() ?: [];
+        if ($this->form_validation->submitted() && !$this->valid_quantity($this->io->post('quantity'))) {
+            $errors[] = 'Quantity must be a non-negative whole number.';
+        }
+
+        return $errors;
+    }
 }

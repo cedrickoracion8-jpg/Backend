@@ -282,3 +282,41 @@ LavaLust Framework is open-source software licensed under the **[MIT License](ht
 - **GitHub Repository:** [https://github.com/ronmarasigan/lavalust](https://github.com/ronmarasigan/lavalust)
 - **Documentation:** [https://lavalust.netlify.app](https://lavalust.netlify.app)
 - **Report an Issue:** [https://github.com/ronmarasigan/lavalust/issues](https://github.com/ronmarasigan/lavalust/issues)
+
+## Application database schema
+
+Account data belongs in the plural `users` table, not the separate singular `user` table. The expected `users` columns are:
+
+| Column | Definition |
+|---|---|
+| `id` | Unsigned integer primary key, auto-increment |
+| `username` | `VARCHAR(100)`, required, unique |
+| `email` | `VARCHAR(255)`, required, indexed (not unique) |
+| `password` | `VARCHAR(255)`, required |
+| `role` | `ENUM('admin','user')`, required, default `user` |
+| `is_active` | Unsigned `TINYINT`, required, default `1` |
+| `created_at` | `DATETIME`, required, default current timestamp |
+| `updated_at` | Nullable `DATETIME` |
+
+Public registration creates regular `user` accounts. Only an `admin` can manage products and users through the API.
+
+## Vue API and deployment
+
+The API uses JSON. Send `Content-Type: application/json`; include `Authorization: Bearer <access_token>` on protected requests. Product reads and the profile require a token; user management and product writes require an admin token.
+
+| Method | Endpoint | Access |
+|---|---|---|
+| POST | `/api/register` | Public |
+| POST | `/api/login` | Public |
+| POST | `/api/refresh` | Refresh token in JSON body |
+| POST | `/api/logout` | Access token and refresh token |
+| GET | `/api/profile` | Access token |
+| GET | `/api/products` | Access token |
+| POST | `/api/products` | Admin |
+| PUT / DELETE | `/api/products/{id}` | Admin |
+| GET / POST | `/api/users` | Admin |
+| PUT / DELETE | `/api/users/{id}` | Admin |
+
+For Render, use the Docker runtime and set `APP_ENV=production`, `APP_URL`, `DB_DRIVER=mysql`, `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET`, `REFRESH_TOKEN_KEY`, `MIGRATION_SECRET`, and `CORS_ORIGINS`. The JWT and refresh secrets must be different random strings of at least 32 characters. Set `CORS_ORIGINS` to the exact Vercel site origin (comma-separated if also allowing `http://localhost:5173`). This code uses MySQL-specific SQL; Render's managed PostgreSQL is not compatible without migrating the DB code.
+
+Before API use, apply migrations with `GET /migration/migrate` and the `X-Migration-Secret` header set to `MIGRATION_SECRET`, then remove that secret from Render. Register an account and have a trusted database administrator promote it to `admin`; public registration cannot create admins. For Vercel, set `VITE_API_BASE_URL` to the Render URL ending in `/api`, then redeploy the frontend.

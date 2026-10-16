@@ -34,7 +34,6 @@ class Create_users_table {
                     'type'       => 'VARCHAR',
                     'constraint' => 255,
                     'null'       => FALSE,
-                    'unique'     => TRUE,
                 ],
                 'password' => [
                     'type'       => 'VARCHAR',
@@ -43,7 +42,7 @@ class Create_users_table {
                 ],
                 'role' => [
                     'type'       => 'ENUM',
-                    'constraint' => "'admin','moderator','user'",
+                    'constraint' => "'admin','user'",
                     'null'       => FALSE,
                     'default'    => 'user',
                 ],

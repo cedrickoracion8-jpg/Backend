@@ -9,59 +9,52 @@ class MigrationController extends Controller
 
     public function __construct()
     {
-
         parent::__construct();
-
+        if (PHP_SAPI !== 'cli') {
+            $this->require_migration_secret();
+        }
         $this->call->library('migration');
-
     }
-
 
     public function create_migration($migration_class)
     {
-
         $this->migration->create_migration($migration_class);
-
     }
-
 
     public function migrate()
     {
-
         $this->migration->migrate();
-
     }
-
 
     public function rollback()
     {
-
         $this->migration->rollback();
-
     }
-
 
     public function rollback_all()
     {
-
         $this->migration->rollback_all();
-
     }
-
 
     public function refresh()
     {
-
         $this->migration->refresh();
-
     }
-
 
     public function status()
     {
-
         $this->migration->status();
+    }
 
+    private function require_migration_secret()
+    {
+        $secret = getenv('MIGRATION_SECRET') ?: '';
+        $provided = $_SERVER['HTTP_X_MIGRATION_SECRET'] ?? '';
+
+        if ($secret === '' || !hash_equals($secret, $provided)) {
+            show_error('403 Forbidden', 'A valid migration secret is required.', 'error_general', 403);
+            exit;
+        }
     }
 
 }

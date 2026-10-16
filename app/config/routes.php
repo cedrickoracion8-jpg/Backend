@@ -1,13 +1,11 @@
 <?php
 
-//lab 3
-$router->get('/profile', 'StudentController::index', ['middleware' => 'StudentMiddleware']);
-//lab 4
-$router->any('/show-users', 'AuthController::login');
-//lab 5
 $router->any('/', 'AuthController::login');
 $router->any('/login', 'AuthController::login');
+$router->any('/register', 'AuthController::register');
 $router->get('/logout', 'AuthController::logout');
+$router->post('/logout', 'AuthController::logout');
+$router->get('/show-users', 'UserController::showUsers');
 
 // API authentication and product CRUD
 $router->group(['prefix' => '/api'], function ($router) {
@@ -37,23 +35,25 @@ $router->group(['prefix' => '/api'], function ($router) {
     $router->options('/products/{id}', 'ApiController::product_update');
 });
 
-// lab 6 migrations
+$router->group(['middleware' => 'AuthMiddleware'], function ($router) {
+    $router->get('/product/display', 'ProductController::read');
+    $router->get('/product/create', 'ProductController::create');
+    $router->post('/product/create', 'ProductController::create');
+    $router->get('/product/edit/{id}', 'ProductController::edit');
+    $router->post('/product/edit/{id}', 'ProductController::edit');
+    $router->post('/product/delete/{id}', 'ProductController::delete');
+
+    $router->get('/products', 'ProductController::read');
+    $router->get('/products/create', 'ProductController::create');
+    $router->post('/products/create', 'ProductController::create');
+    $router->get('/products/edit/{id}', 'ProductController::edit');
+    $router->post('/products/edit/{id}', 'ProductController::edit');
+    $router->post('/products/delete/{id}', 'ProductController::delete');
+});
+
 $router->get('/migration/create/{migration_class}', 'MigrationController::create_migration');
 $router->get('/migration/migrate', 'MigrationController::migrate');
 $router->get('/migration/rollback', 'MigrationController::rollback');
 $router->get('/migration/rollback-all', 'MigrationController::rollback_all');
 $router->get('/migration/refresh', 'MigrationController::refresh');
 $router->get('/migration/status', 'MigrationController::status');
-
-$router->group(['middleware' => 'AuthMiddleware'], function ($router) {
-    $router->get('/product/display', 'ProductController::read');
-    $router->any('/product/create', 'ProductController::create');
-    $router->any('/product/edit/{id}', 'ProductController::edit');
-    $router->get('/product/delete/{id}', 'ProductController::delete');
-
-    $router->get('/products', 'ProductController::read');
-    $router->any('/products/create', 'ProductController::create');
-    $router->any('/products/edit/{id}', 'ProductController::edit');
-    $router->get('/products/delete/{id}', 'ProductController::delete');
-});
-
