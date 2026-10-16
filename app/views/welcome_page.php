@@ -6,7 +6,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hallo & Welcome to LavaLust</title>
+    <title>Welcome to LavaLust</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700;800&family=Unbounded:wght@400;500&display=swap" rel="stylesheet">
@@ -561,7 +561,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 <nav>
     <a class="nav-logo" href="#">
         <div class="flame">🔥</div>
-        Hallo & Welcome to LavaLust
+        Oracion - Lavalust
     </a>
     <div class="nav-links">
         <a href="https://lavalust.netlify.app/docs/" target="_blank">Docs</a>
@@ -580,13 +580,17 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
         A lightweight, expressive PHP MVC framework built for developers who want structure without the bloat.
     </p>
     <div class="hero-actions">
-        <a href="https://lavalust.netlify.app/docs/" target="_blank" class="btn btn-primary">
-            Read the Docs
-        </a>
-        <a href="https://github.com/ronmarasigan/LavaLust" target="_blank" class="btn btn-ghost">
-            View on GitHub
-        </a>
-    </div>
+    <a href="https://lavalust.netlify.app/docs/" target="_blank" class="btn btn-primary">
+        Read the Docs
+    </a>
+    <a href="https://github.com/ronmarasigan/LavaLust" target="_blank" class="btn btn-ghost">
+        View on GitHub
+    </a>
+    <a href="/login" class="btn btn-primary">
+        Go to Login
+    </a>
+</div>
+
 </div>
 
 <!-- STATS -->
